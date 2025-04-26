@@ -3,35 +3,24 @@ const cors = require('cors');
 const { initializeApp: initializeClientApp } = require('firebase/app');
 const { getAuth, signInWithEmailAndPassword } = require('firebase/auth');
 const admin = require('firebase-admin');
+const config = require('../config'); // Import the centralized config
+const firebaseConfig = require('../firebaseConfig'); // Import the centralized Firebase config
 
-const PORT = 3005;
+const PORT = config.ports.authService;
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
-    authDomain: "bradensbay-1720893101514.firebaseapp.com",
-    databaseURL: "https://bradensbay-1720893101514-default-rtdb.firebaseio.com/",
-    projectId: "bradensbay-1720893101514",
-    storageBucket: "bradensbay-1720893101514.appspot.com",
-    messagingSenderId: "280971564912",
-    appId: "1:280971564912:web:989fff5191d0512c1b21b5",
-    measurementId: "G-DNJS8CVKWD"
-};
-
-const serviceAccountKeyPath = '/home/christian/bradensbay-1720893101514-firebase-adminsdk-5czfh-6849539d64.json';
-
+// Initialize Firebase Admin SDK
 admin.initializeApp({
-    credential: admin.credential.cert(require(serviceAccountKeyPath)),
+    credential: admin.credential.cert(require(firebaseConfig.serviceAccountKeyPath)),
     databaseURL: firebaseConfig.databaseURL,
 });
 
+// Initialize Firebase Client SDK
 const firebaseApp = initializeClientApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
-
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 
 async function loginUser(email, password) {
     try {
@@ -42,7 +31,6 @@ async function loginUser(email, password) {
         throw error;
     }
 }
-
 
 app.post('/sign-in', async (req, res) => {
     const { email, password } = req.body;
@@ -58,7 +46,6 @@ app.post('/sign-in', async (req, res) => {
         return res.status(500).json({ error: error.message }); // Return detailed error message
     }
 });
-
 
 app.post('/verify-token', async (req, res) => {
     const { token } = req.body;
@@ -76,7 +63,6 @@ app.post('/verify-token', async (req, res) => {
     }
 });
 
-
 app.get('/user/:uid', async (req, res) => {
     const { uid } = req.params;
 
@@ -88,7 +74,6 @@ app.get('/user/:uid', async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 });
-
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);

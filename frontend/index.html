@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AI Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+    <div id="mobile-notification">
+        Hello, you are using a mobile device. This is still a beta app and will perform better in a desktop environment.
+        <button id="dismiss-button">Okay</button>
+      </div>
+    <div id="terminal">
+        <div id="terminal__bar">
+            <!-- <span id="bar__icons" style="margin-right: 8px;">🔴🟡🟢</span>  -->
+            <p id="bar__user">user@bradensbay.com ~</p>
+            
+            <div class="link-group">
+              <a href="https://signup.bradensbay.com" style="color: #7eda28;"> Make_an_account </a>
+              <a href="readme.html" target='_blank' style="color: #7eda28; margin-left: 16px;"> Help </a>
+            </div>
+          </div>
+          
+          
+        <div id="terminal__body">    
+            
+                <div id="logosignup">
+                    <img src="logo.png" alt="logo" style="width:200px; height:50px;">
+                </div>
+                <div id="terminal__prompt">
+                    <span id="terminal__prompt--user">email:</span>
+                    <span id="terminal__prompt--location">~</span>
+                    <span id="terminal__prompt--bling">$</span>
+                    <input type="text" id="terminal__input" autofocus>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+
+
+
+    <script type="module">
+        function isMobileDevice() {
+            return /iPhone|iPad|iPod|Android|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+        }
+
+        // Show notification if on a mobile device
+        window.addEventListener('load', () => {
+            if (isMobileDevice()) {
+            const notification = document.getElementById('mobile-notification');
+            notification.style.display = 'block';
+            
+            // Add event listener to the "Okay" button
+            const dismissButton = document.getElementById('dismiss-button');
+            dismissButton.addEventListener('click', () => {
+                notification.style.display = 'none';
+            });
+            }
+        });
+
+
+    let uid = "";
+    let email = "";
+    let contPwd = "";
+    let state = "awaitingEmail";
+    let vmName = false;
+    let loadVmError = "";
+
+    const totalBars = 30; 
+
+
+    function renderLoadingBar(progress, duration, loadingBarElement) {
+        const totalBars = 30;
+        const filledBars = Math.round((progress / duration) * totalBars);
+        const emptyBars = totalBars - filledBars;
+        const bar = `[${'#'.repeat(filledBars)}${'-'.repeat(emptyBars)}]`;
+
+        // Update the loading bar element's content
+        loadingBarElement.innerHTML = `<span>${bar}</span>`;
+    }
+
+    async function startLoading(duration) {
+        const terminalBody = document.getElementById("terminal__body");
+        let loadingBarElement = document.createElement("div");
+        loadingBarElement.classList.add("terminal__output", "loading-bar");
+        terminalBody.insertBefore(loadingBarElement, document.getElementById("terminal__prompt"));
+        let currentTime = 0;
+        const interval = setInterval(() => {
+            currentTime++;
+            renderLoadingBar(currentTime, duration, loadingBarElement);
+            if (currentTime >= duration) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    loadingBarElement.remove();
+                }, 500);
+            }
+        }, 1000);
+    }
+
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const inputField = document.getElementById("terminal__input");
+        const terminalBody = document.getElementById("terminal__body");
+        let count = 0;
+
+        inputField.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                count++;
+                const command = inputField.value.trim();
+                processCommand(command);
+                inputField.value = "";
+
+            }
+        });
+        async function executeCommand(prompt) {
+            const apiUrl = 'https://run-prompt.bradensbay.com/execute';
+
+            const requestBody = {
+                uid: uid,
+                prompt: prompt,
+                username: email.substring(0, email.indexOf("@")),
+                contPwd: contPwd
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.status} - ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Response from server:', data.message);
+                displayOutput(data.message);
+                displayOutput("<a href='https://user-endpoint.bradensbay.com/"+email.split('@')[0]+"'' target='_blank'>view site</a>");
+                const terminalBody = document.getElementById('terminal__body');
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+            } catch (error) {
+                console.error('Failed to execute command:', error);
+                displayOutput('Failed to execute command:', error);
+            }
+        }
+
+        function processCommand(command) {
+            if (state === "awaitingEmail") {
+                email = command.toLowerCase();;
+                state = "awaitingPassword";
+                document.getElementById("terminal__prompt--user").innerText = "password:";
+                document.getElementById('terminal__input').type = 'password';
+
+            } else if (state === "awaitingPassword") {
+                document.getElementById('terminal__input').type = 'text';
+                loginUser(email, command);
+            } else if (state === "loggedIn") {
+                document.getElementById('terminal__input').type = 'text';
+                if (command === "addkey") {
+                    promptForKey();
+                } else {
+                    displayOutput(command);
+                    startLoading(20);
+                    executeCommand(command);
+                    
+                    return;
+                }
+                displayOutput(command);
+            }
+        }
+
+        function promptForKey() {
+            const keyInput = prompt("Enter the key to be sent:");
+            if (keyInput) {
+                sendKeyToAPI(keyInput);
+            }
+        }
+
+        function sendKeyToAPI(key) {
+            // Ensure that `uid` is available and properly defined.
+            if (!uid || !key) {
+                displayOutput("Error: User ID or key is missing.");
+                return;
+            }
+
+            fetch('https://update-key.bradensbay.com/addkey', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ key: key, uid: uid }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(result => {
+                displayOutput(`Key added successfully: ${result.message}`);
+            })
+            .catch(error => {
+                console.error('Error adding key:', error);
+                displayOutput(`Error adding key: ${error.message}`);
+            });
+        }
+
+
+        async function loginUser(email, password) {
+
+            const apiUrl = 'https://sign-in.bradensbay.com/sign-in';
+            try {
+                // Call the API endpoint for login
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to log in');
+                }
+
+                const result = await response.json();
+                uid = result.uid;
+
+                // Update UI to reflect logged-in state
+                state = "loggedIn";
+                document.getElementById("terminal__prompt--location").innerText = `~`;
+                document.getElementById("terminal__prompt--bling").innerText = `$`;
+                document.getElementById("terminal__prompt--user").innerText = email;
+                document.getElementById("bar__user").innerText = email;
+
+                console.log("uid: ", uid);
+
+                // Simulated actions after login
+                const status = await startVm(uid, email);
+                if (!status) {
+                    displayOutput("Not verified or slow network");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 5000);
+                } else {
+                    await getUser(uid);
+                }
+            } catch (error) {
+                displayOutput("Login failed: " + error.message);
+                state = 'awaitingEmail';
+                document.getElementById("terminal__prompt--user").innerText = "email:";
+            }
+        }
+
+        async function startVm(uid, email) {
+            const data = {
+                uid: uid,
+                email: email
+            };
+
+            try {
+                fetch('https://start-vm.bradensbay.com/endpoint', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                    if (result.message === "User email is not verified.") {
+                        displayOutput(result.message);
+                        loginUser(null, null);
+                        return false;
+                    }
+                    return true;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadVmError = error.message;
+                    return false;
+                });
+
+                // Immediately return true so the process continues
+                return true;
+            } catch (error) {
+                console.error('Unexpected Error:', error);
+                return false;
+            }
+        }
+
+
+
+        async function getUser(uid) {
+            const apiEndpoint = 'https://get-user-data.bradensbay.com/execute';
+            const retryInterval = 100000; // 100s
+
+            while (true) {
+                try {
+                    const response = await fetch(apiEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ uid }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API responded with status ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    const { port, pwd, message } = data;
+
+                    if (port && pwd) {
+                        displayOutput(`ssh domain and port: bradensbay.com:${port}<br>vm user password: ${pwd}`);
+                        contPwd = pwd;
+                        break;
+                    } else {
+                        const newLoginMessage = displayOutput(message); // Capture the created element
+                        startLoading(100);
+
+                        // Remove the message after 100 seconds
+                        setTimeout(() => {
+                            if (newLoginMessage && newLoginMessage.parentNode) {
+                                newLoginMessage.parentNode.removeChild(newLoginMessage);
+                            }
+                        }, 100000); // 100 seconds
+                    }
+                } catch (error) {
+                    console.error('Error retrieving user credentials:', error.message);
+                }
+                await new Promise((resolve) => setTimeout(resolve, retryInterval));
+            }
+        }
+
+        function displayOutput(output) {
+            const commandOutput = document.createElement("div");
+            commandOutput.classList.add("terminal__output");
+            commandOutput.innerHTML = `<span>${output}</span>`;
+            terminalBody.insertBefore(commandOutput, document.getElementById("terminal__prompt"));
+            return commandOutput; // Return the created element
+        }
+
+    });
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

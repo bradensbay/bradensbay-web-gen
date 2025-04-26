@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">
+    <title>Documentation for Bradensbay Website Builder</title>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <style>
+
+
+        h1 {
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h4 {
+            color: #FFD700;
+            margin-top: 20px;
+        }
+ 
+
+
+        a {
+            color: #4DA8DA;
+            text-decoration: underline;
+        }
+
+        a:hover {
+            color: #00CFFF;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    
+
+    <div id="terminal">
+        <div id="terminal__bar">
+            <span style="margin-right: 8px;"></span> Documentation Terminal
+        </div>
+        <div id="terminal__body">
+            <h1>Documentation for Bradensbay Website Builder</h1>
+            <h4>How to Use</h4>
+            <p>Simply ask the AI to perform tasks related to website creation or management on your Ubuntu VM with public access. Login and type anything in the prompt. For instance, try: <em>“Create a portfolio website for [Your Name] with my LinkedIn profile at [Your LinkedIn Link].”</em></p> The LLM will keep a 15 input context window but to reset this type "clear".
+            <p>For custom domain DNS forwarding, please contact <a href="mailto:christian@bradensbay.com">christian@bradensbay.com</a>.</p>
+            
+            <h4>VM-Context</h4>
+            <p>When you create an account with Bradensbay, you are provided with an Ubuntu VM instance. All AI prompts are processed by the Gemini API, giving the AI controlled access to your VM with certain guardrails. You can SSH into your VM to make changes or set up your own code. You may also pre-install libraries and inform the AI, for instance: "Do this knowing that XYZ software is already installed."</p>
+            <p>If you encounter connectivity issues, you might need to use the command:</p>
+            <pre>export http_proxy=http://10.0.0.11:3128;</pre>
+
+            <h4>How to Connect</h4>
+            <p>You’ll need <a href="https://www.putty.org/">PuTTY</a> and PuTTYgen (or similar SSH tools) installed. Always download from a secure source to avoid eavesdropping.</p>
+            <ol>
+                <li>Generate an RSA 2048-bit key in PuTTYgen. Move your mouse over the blank area to create a random seed. Save your private key securely and copy your public key.</li>
+                <li>Log in to Bradensbay and use the command <code>addkey</code> to add your public key.</li>
+                <li>In PuTTY, set the host as <code>bradensbay.com</code> and specify the port displayed in your console.</li>
+                <li>Navigate to <strong>SSH &gt; Auth &gt; Credentials</strong>, and select your private key.</li>
+                <li>Connect, enter your username, and trust the connection if prompted.</li>
+            </ol>
+            <p>Note: The user password generated for your VM is only for sudo privileges.</p>
+        </div>
+    </div>
+</body>
+</html>

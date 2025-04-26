@@ -4,6 +4,10 @@ const { exec } = require('child_process');
 const { initializeApp } = require('firebase/app');
 const admin = require('firebase-admin');
 const { getDatabase, ref, set, update } = require('firebase/database');
+const config = require('../config'); // Import the centralized config
+const firebaseConfig = require('../firebaseConfig'); // Import the centralized Firebase config
+
+const PORT = config.ports.startVmService;
 
 const app = express();
 
@@ -13,29 +17,16 @@ app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Firebase client configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyDmdf8NhoFAzXKGuBWYq5XoDrM5eNClgOg",
-    authDomain: "bradensbay-1720893101514.firebaseapp.com",
-    databaseURL: "https://bradensbay-1720893101514-default-rtdb.firebaseio.com/",
-    projectId: "bradensbay-1720893101514",
-    storageBucket: "bradensbay-1720893101514.appspot.com",
-    messagingSenderId: "280971564912",
-    appId: "1:280971564912:web:989fff5191d0512c1b21b5",
-    measurementId: "G-DNJS8CVKWD"
-};
-
 // Initialize Firebase App
 initializeApp(firebaseConfig);
 
 // Initialize Firebase Admin SDK (requires admin credentials)
-const serviceAccount = require('/home/christian/bradensbay-1720893101514-firebase-adminsdk-5czfh-6849539d64.json'); // Replace with your Firebase Admin SDK JSON key
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: firebaseConfig.databaseURL
+    credential: admin.credential.cert(require(firebaseConfig.serviceAccountKeyPath)),
+    databaseURL: firebaseConfig.databaseURL,
 });
 
-//Function to verify email using Firebase Admin SDK
+// Function to verify email using Firebase Admin SDK
 async function isEmailVerified(uid) {
     try {
         const userRecord = await admin.auth().getUser(uid);
@@ -60,8 +51,7 @@ function executeScript(uid, email) {
                 console.error(`Script error: ${stderr}`);
                 return reject(new Error(`Script error: ${stderr}`));
             }
-            
-            
+            resolve();
         });
     });
 }
@@ -78,16 +68,11 @@ app.post('/endpoint', async (req, res) => {
         if (!emailVerified) {
             return res.status(403).json({ message: 'User email is not verified.' });
         }
-        
 
         res.status(200).json({
-            message: 'Script started successfully!'
+            message: 'Script started successfully!',
         });
         await executeScript(uid, email);
-
-        // Send a success response
-
-
     } catch (error) {
         console.error(error.message);
         res.status(500).json({ message: 'Error processing request', error: error.message });
@@ -95,7 +80,6 @@ app.post('/endpoint', async (req, res) => {
 });
 
 // Start the server
-const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
