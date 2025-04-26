@@ -1,0 +1,84 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Services
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_REGISTRY: docker.io
+      SSH_PORT: 22
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build and push Docker images for backend services
+      - name: Build and Push Backend Services
+        run: |
+          declare -A service_ports=(
+            ["auth-service"]=3005
+            ["new-user-service"]=3006
+            ["prompt-service"]=3003
+            ["start-vm-service"]=3001
+            ["update-key-service"]=3002
+            ["user-service"]=3004
+          )
+          for service in "${!service_ports[@]}"; do
+            docker build -t $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest backend/$service
+            docker push $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
+          done
+
+      # Build and push Docker image for frontend
+      - name: Build and Push Frontend
+        run: |
+          docker build -t $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest frontend
+          docker push $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest
+
+      # Deploy backend services via SSH
+      - name: Deploy Backend Services
+        run: |
+          declare -A service_ports=(
+            ["auth-service"]=3005
+            ["new-user-service"]=3006
+            ["prompt-service"]=3003
+            ["start-vm-service"]=3001
+            ["update-key-service"]=3002
+            ["user-service"]=3004
+          )
+          for service in "${!service_ports[@]}"; do
+            port=${service_ports[$service]}
+            sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p $SSH_PORT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << EOF
+              docker pull $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
+              docker stop $service || true
+              docker rm $service || true
+              docker run -d --name $service -p $port:$port $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
+            EOF
+          done
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+
+      # Deploy frontend via SSH
+      - name: Deploy Frontend
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p $SSH_PORT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << EOF
+            docker pull $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest
+            docker stop frontend || true
+            docker rm frontend || true
+            docker run -d --name frontend -p 80:80 $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest
+          EOF
+        env:
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
