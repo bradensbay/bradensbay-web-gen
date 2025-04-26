@@ -61,11 +61,16 @@ jobs:
           )
           for service in "${!service_ports[@]}"; do
             port=${service_ports[$service]}
+            if [ "$service" == "prompt-service" ]; then
+              env_var="-e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}"
+            else
+              env_var=""
+            fi
             sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p $SSH_PORT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << EOF
               docker pull $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
               docker stop $service || true
               docker rm $service || true
-              docker run -d --name $service -p $port:$port $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
+              docker run -d --name $service -p $port:$port $env_var $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
             EOF
           done
         env:
