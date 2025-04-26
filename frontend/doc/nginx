@@ -1,0 +1,1 @@
+sudo apt update; sudo apt install nginx ;sudo systemctl start nginx; sudo systemctl enable nginx; sudo cat > /etc/nginx/sites-available/bradensbay.com; sudo ln -s /etc/nginx/sites-available/bradensbay.com /etc/nginx/sites-enabled/

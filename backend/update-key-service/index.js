@@ -2,9 +2,11 @@ const express = require('express');
 const { exec } = require('child_process');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const config = require('../config'); // Import the centralized config
 
 const app = express();
-const port = 3002;
+const PORT = config.ports.updateKeyService;
+
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -45,6 +47,6 @@ app.post('/addkey', (req, res) => {
     });
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });

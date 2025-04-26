@@ -1,0 +1,9 @@
+sudo ufw allow in on lxdfan0
+sudo ufw route allow in on lxdfan0
+sudo ufw route allow out on lxdfan0
+
+
+
+
+lxdbr0
+

@@ -3,9 +3,10 @@ const cors = require('cors');
 const { initializeApp: initializeClientApp } = require('firebase/app');
 const { getAuth, createUserWithEmailAndPassword, sendEmailVerification } = require('firebase/auth');
 const admin = require('firebase-admin');
-const firebaseConfig = require('../firebaseConfig'); // Import the shared config
+const firebaseConfig = require('../firebaseConfig');
+const config = require('../config'); // Import the centralized config
 
-const PORT = 3006;
+const PORT = config.ports.newUserService;
 
 // Service Account Key Path (for Admin SDK tasks)
 const serviceAccountKeyPath = '/home/christian/bradensbay-1720893101514-firebase-adminsdk-5czfh-6849539d64.json';

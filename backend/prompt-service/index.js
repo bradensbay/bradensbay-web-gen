@@ -5,10 +5,11 @@ const { exec } = require('child_process');
 const { encoding_for_model } = require('@dqbd/tiktoken');
 const fs = require('fs');
 const path = require('path');
+const config = require('../config'); // Import the centralized config
 
 const app = express();
-app.use(cors());
-const PORT = 3003;
+const PORT = config.ports.promptService;
+
 const maxLength = 2000; // Max token count for web input
 const maxHistory = 15; // Max number of prior inputs to include
 

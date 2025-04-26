@@ -1,0 +1,274 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu+Mono');
+
+body {
+  background-color: black; /* Removes the blue gradient and sets it to black */
+  font-family: 'Ubuntu', sans-serif;
+  color: white;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center the terminal vertically and horizontally */
+  height: 100vh; /* Ensure it takes up the full viewport height */
+  font-size: 15px;
+  overflow: hidden; /* Prevent scrolling */
+  font-size: calc(1.5vw + 10px); /* Scales font size with screen size */
+}
+
+#terminal {
+  width: 100%; /* Full screen width */
+  height: 100%; /* Full screen height */
+  background-color: black;
+  color: white;
+  font-family: 'Ubuntu Mono', monospace;
+  border-radius: 0; /* Remove border radius */
+  box-shadow: none; /* Remove shadow */
+  margin: 0; /* Remove top margin */
+  overflow: hidden;
+}
+
+#terminal__body {
+  /* padding: 20px; */
+  margin: 0; /* Remove margin */
+  height: calc(100% - 60px); /* Adjust height to exclude the terminal bar */
+  overflow-y: auto;
+}
+
+
+
+
+
+h1 {
+  color: #FFFFFF;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h4 {
+  color: #FFD700;
+  margin-top: 20px;
+}
+
+
+
+a {
+  color: #4DA8DA;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: #00CFFF;
+}
+
+
+
+#terminal__bar {
+  max-height: calc(1.5vw + 10px);
+  background: linear-gradient(#504b45, #3c3b37);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  color: #D5D0CE;
+}
+
+.link-group {
+  margin-left: auto; /* Pushes the link group to the right */
+  display: flex;
+}
+
+.link-group a {
+  color: #7eda28;
+  text-decoration: none;
+}
+
+
+
+
+
+
+
+
+form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-size: calc(1.5vw + 10px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+button {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+}
+
+button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#recaptcha-container {
+  margin: 10px 0;
+}
+
+#verify-code-form {
+  display: none;
+}
+
+/* Additional styles for the terminal */
+#container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+
+#bar__user {
+  color: #d5d0ce;
+  margin-left: 0px;
+  line-height: 15px;
+}
+
+
+
+/* Logo and signup fixed at top */
+
+
+
+#terminal__prompt {
+  display: flex;
+  align-items: center;
+}
+
+#terminal__prompt--user {
+  color: #7eda28;
+  /* margin-left: 30px; */
+}
+
+#terminal__prompt--location,
+#terminal__prompt--bling,
+#terminal__input {
+  color: white;
+  font-family: 'Ubuntu Mono';
+  margin-left: 6px;
+}
+
+#terminal__input {
+  background-color: black;
+  border: none;
+  padding: 2px 8px;
+  width: auto;
+  flex-grow: 1;
+  font-size: calc(1.5vw + 10px);
+}
+
+#terminal__input:focus {
+  outline: none;
+}
+
+#terminal__prompt img {
+  margin-bottom: 20px;
+}
+
+#terminal__prompt a {
+  display: block;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+
+  #terminal_body{
+    padding: 0px;
+  }
+  #terminal{
+    height: 600px;
+    width: 100%;
+  }
+    
+  #terminal__bar {
+    max-height: 90px;
+    background: linear-gradient(#504b45, #3c3b37);
+    padding: 0px;
+    color: #D5D0CE;
+    flex-direction: column;
+    align-items: start;
+    gap: 5px; /* Add spacing between rows */
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between; /* Ensure dots and username are on the same line */
+    
+}
+.bar__user{
+  content: "";
+}
+
+.bar-icons {
+    font-size: 1.2rem; /* Adjust icon size if needed */
+}
+
+
+.link-group {
+  margin-left: inherit;
+}
+
+.link-group a {
+    color: #7eda28;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.link-group a:hover {
+    text-decoration: underline;
+}
+
+}
+    /* Notification container styling */
+    #mobile-notification {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      display: none; /* Hidden by default */
+    }
+
+    /* Button styling */
+    #mobile-notification button {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #mobile-notification button:hover {
+      background-color: #0056b3;
+    }

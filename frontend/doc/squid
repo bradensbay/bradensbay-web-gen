@@ -1,0 +1,4 @@
+sudo apt update; sudo apt install squid -y; sudo nano /etc/squid/squid.conf;
+mod -> http_access allow all
+sudo systemctl restart squid
+//basicly delete all of the http allow shit
