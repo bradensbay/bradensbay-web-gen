@@ -84,6 +84,6 @@ jobs:
             docker stop frontend || true
             docker rm frontend || true
             docker run -d --name frontend -p 80:80 $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest
-EOF
+          EOF
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
