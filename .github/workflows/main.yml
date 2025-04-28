@@ -12,7 +12,7 @@ jobs:
 
     env:
       DOCKER_REGISTRY: docker.io
-      SSH_PORT: 22
+      SSH_PORT: 23
 
     steps:
       # Checkout the repository
