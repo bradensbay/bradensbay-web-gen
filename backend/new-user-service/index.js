@@ -8,8 +8,7 @@ const config = require('../config'); // Import the centralized config
 
 const PORT = config.ports.newUserService;
 
-// Service Account Key Path (for Admin SDK tasks)
-const serviceAccountKeyPath = '/home/christian/bradensbay-1720893101514-firebase-adminsdk-5czfh-6849539d64.json';
+const serviceAccountKeyPath = '/new-user-service/bradensbay-1720893101514-firebase-adminsdk-5czfh-6849539d64.json';
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
