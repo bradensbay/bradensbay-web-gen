@@ -35,7 +35,7 @@ jobs:
 
       # Upload the .zip file as an artifact
       - name: Upload Container Service ZIP
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: container-service
           path: container-service.zip
@@ -113,9 +113,3 @@ jobs:
           EOF
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-
-      - name: Upload Container Service ZIP
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: container-service
-          path: container-service.zip
