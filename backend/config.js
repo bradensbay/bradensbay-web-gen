@@ -6,6 +6,7 @@ const config = {
         startVmService: 3001,
         updateKeyService: 3002,
         promptService: 3003,
+        containerService: 3007,
     },
 };
 
