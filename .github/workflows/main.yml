@@ -35,7 +35,7 @@ jobs:
 
       # Upload the .zip file as an artifact
       - name: Upload Container Service ZIP
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: container-service
           path: container-service.zip
