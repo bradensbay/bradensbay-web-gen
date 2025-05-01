@@ -7,15 +7,12 @@ on:
 
 jobs:
   build-and-deploy:
-
-  runs-on: ubuntu-latest
-    name: Build and Deploy Services
     runs-on: ubuntu-latest
+    name: Build and Deploy Services
 
     env:
       DOCKER_REGISTRY: docker.io
       SSH_PORT: 23
-
 
     steps:
       - name: Checkout Code
