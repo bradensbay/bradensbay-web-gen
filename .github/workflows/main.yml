@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-<<<<<<< HEAD
+
   runs-on: ubuntu-latest
     name: Build and Deploy Services
     runs-on: ubuntu-latest
@@ -16,8 +16,7 @@ jobs:
       DOCKER_REGISTRY: docker.io
       SSH_PORT: 23
 
-=======
->>>>>>> a587218e9696c0c08d6fc93e9b7c144003c23cad
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
