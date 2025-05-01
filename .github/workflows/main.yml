@@ -6,43 +6,45 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  run-unit-tests:
     runs-on: ubuntu-latest
-    name: Build and Deploy Services
-
-    env:
-      DOCKER_REGISTRY: docker.io
-      SSH_PORT: 23
-
+    name: Run Unit Tests for Backend Services
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Log in to Docker Hub
+      - name: Install and Run Unit Tests
+        run: |
+          for service in backend/*; do
+            if [ -f "$service/package.json" ]; then
+              cd $service
+              npm install
+              npm test
+              cd -
+            fi
+          done
+
+  build-and-deploy-backend:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Backend Services
+    needs: run-unit-tests
+    if: success()
+    env:
+      DOCKER_REGISTRY: docker.io
+      SSH_PORT: 23
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Create a .zip file for container-service
-      - name: Create Container Service ZIP
-        run: |
-          cd backend/container-service
-          zip -r container-service.zip ./*
-          mv container-service.zip ../../container-service.zip
-
-      # Upload the .zip file as an artifact
-      - name: Upload Container Service ZIP
-        uses: actions/upload-artifact@v4
-        with:
-          name: container-service
-          path: container-service.zip
-
-      # Build and push Docker images for backend services
       - name: Build and Push Backend Services
         run: |
-          declare -A service_ports=(
+          declare -A service_ports=( 
             ["auth-service"]=3005
             ["new-user-service"]=3006
             ["prompt-service"]=3003
@@ -55,16 +57,9 @@ jobs:
             docker push $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
           done
 
-      # Build and push Docker image for frontend
-      - name: Build and Push Frontend
-        run: |
-          docker build -t $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest frontend
-          docker push $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest
-
-      # Deploy backend services via SSH
       - name: Deploy Backend Services
         run: |
-          declare -A service_ports=(
+          declare -A service_ports=( 
             ["auth-service"]=3005
             ["new-user-service"]=3006
             ["prompt-service"]=3003
@@ -87,21 +82,27 @@ jobs:
           EOF
           done
 
-          # Deploy container-service in a screen session
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p $SSH_PORT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
-            mkdir -p /home/christian/container-service
-            cd /home/christian/container-service
-            curl -o container-service.zip https://github.com/christianGRogers/bradensbay-web-gen/releases/download/latest/container-service.zip
-            unzip -o container-service.zip
-            npm install
-            screen -dmS container-service bash -c '
-              CONTAINER_SERVICE_KEY=${{ secrets.CONTAINER_SERVICE_KEY }} PORT=3007 node index.js
-            '
-          EOF
-        env:
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+  build-and-deploy-frontend:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Frontend
+    env:
+      DOCKER_REGISTRY: docker.io
+      SSH_PORT: 23
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      # Deploy frontend via SSH
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Frontend
+        run: |
+          docker build -t $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest frontend
+          docker push $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest
+
       - name: Deploy Frontend
         run: |
           sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p $SSH_PORT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
@@ -110,17 +111,3 @@ jobs:
             docker rm frontend || true
             docker run -d --name frontend -p 80:80 $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/frontend:latest
           EOF
-        env:
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-
-      # Install dependencies and run tests for backend services
-      - name: Run Unit Tests
-        run: |
-          for service in backend/*; do
-            if [ -f "$service/package.json" ]; then
-              cd $service
-              npm install
-              npm test
-              cd -
-            fi
-          done
