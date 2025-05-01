@@ -7,13 +7,6 @@ on:
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy Services
-    runs-on: ubuntu-latest
-
-    env:
-      DOCKER_REGISTRY: docker.io
-      SSH_PORT: 23
-
     steps:
       # Checkout the repository
       - name: Checkout Code
@@ -113,3 +106,15 @@ jobs:
           EOF
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+
+      # Install dependencies and run tests for backend services
+      - name: Run Unit Tests
+        run: |
+          for service in backend/*; do
+            if [ -f "$service/package.json" ]; then
+              cd $service
+              npm install
+              npm test
+              cd -
+            fi
+          done
