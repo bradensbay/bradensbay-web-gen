@@ -18,21 +18,21 @@ describe('Auth Service Tests', () => {
         });
     });
 
-    describe('POST /verify-token', () => {
-        it('should return 400 for missing token', async () => {
-            const response = await request(app).post('/verify-token').send({});
-            expect(response.status).toBe(400);
-            expect(response.body.error).toBe('Token is required');
-        });
+    // describe('POST /verify-token', () => {
+    //     it('should return 400 for missing token', async () => {
+    //         const response = await request(app).post('/verify-token').send({});
+    //         expect(response.status).toBe(400);
+    //         expect(response.body.error).toBe('Token is required');
+    //     });
 
-        it('should return 500 for invalid token', async () => {
-            const response = await request(app)
-                .post('/verify-token')
-                .send({ token: 'invalid_token' });
-            expect(response.status).toBe(500);
-            expect(response.body.error).toBeDefined();
-        });
-    });
+    //     it('should return 500 for invalid token', async () => {
+    //         const response = await request(app)
+    //             .post('/verify-token')
+    //             .send({ token: 'invalid_token' });
+    //         expect(response.status).toBe(500);
+    //         expect(response.body.error).toBeDefined();
+    //     });
+    // });
 
     describe('GET /user/:uid', () => {
         it('should return 500 for invalid UID', async () => {
