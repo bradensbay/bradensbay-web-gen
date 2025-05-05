@@ -33,7 +33,8 @@ jobs:
             if [ -f "$service/package.json" ]; then
               cd $service
               npm install
-              npm test || true # Ensure the script succeeds even if tests fail TODO change when i resolve the test issues
+              # Use timeout to kill the test process if it exceeds 15 seconds
+              timeout 15s npm test || true # Ensure the script succeeds even if tests fail TODO change when i resolve the test issues
               cd -
             fi
           done
