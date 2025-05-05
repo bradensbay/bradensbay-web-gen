@@ -18,7 +18,7 @@ jobs:
       FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
       FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
       FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
-      FIREBASE_SERVICE_ACCOUNT_KEY_PATH: ./backend/bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json
+      FIREBASE_SERVICE_ACCOUNT_KEY_PATH: ../bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -54,7 +54,7 @@ jobs:
       FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
       FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
       FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
-      FIREBASE_SERVICE_ACCOUNT_KEY_PATH: ./backend/bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json
+      FIREBASE_SERVICE_ACCOUNT_KEY_PATH: ../bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
