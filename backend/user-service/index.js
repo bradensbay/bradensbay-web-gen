@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const { initializeApp } = require('firebase/app');
 const { getDatabase, ref, get } = require('firebase/database');
-const firebaseConfig = require('../firebaseConfig');
-const config = require('../config'); // Import the centralized config
+const firebaseConfig = require('./firebaseConfig');
+const config = require('./config'); // Import the centralized config
 
 const PORT = config.ports.userService;
 
