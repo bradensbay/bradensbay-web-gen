@@ -12,6 +12,7 @@ RUN npm install
 
 # Copy the rest of the application code
 COPY . .
+COPY ./config.js ./
 
 # Expose the port used by the service
 EXPOSE 3005

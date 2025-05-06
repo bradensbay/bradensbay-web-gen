@@ -12,6 +12,8 @@ RUN npm install
 
 # Copy the rest of the application code
 COPY . .
+COPY ./config.js ./
+COPY ./firebaseConfig.js ./
 
 # Expose the port used by the service
 EXPOSE 3001

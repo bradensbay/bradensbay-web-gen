@@ -3,7 +3,7 @@ const cors = require('cors');
 const { initializeApp: initializeClientApp } = require('firebase/app');
 const { getAuth, signInWithEmailAndPassword } = require('firebase/auth');
 const admin = require('firebase-admin');
-const config = require('../config'); // Import the centralized config
+const config = require('./config'); // Import the centralized config
 const firebaseConfig = require('../firebaseConfig'); // Import the centralized Firebase config
 
 const PORT = config.ports.authService;

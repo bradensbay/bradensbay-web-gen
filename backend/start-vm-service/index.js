@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios'); // Use axios for HTTP requests
 const admin = require('firebase-admin');
-const config = require('../config'); // Import the centralized config
-const firebaseConfig = require('../firebaseConfig'); // Import the centralized Firebase config
+const config = require('./config'); // Import the centralized config
+const firebaseConfig = require('./firebaseConfig'); // Import the centralized Firebase config
 
 const PORT = config.ports.startVmService;
 
