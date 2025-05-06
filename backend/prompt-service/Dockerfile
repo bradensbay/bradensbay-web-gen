@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Ensure the config.js file is included
-COPY ../config.js ../
+COPY ./config.js ./
 
 # Expose the port used by the service
 EXPOSE 3003
