@@ -116,8 +116,9 @@ jobs:
                 -e FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }} \
                 -e FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }} \
                 -e FIREBASE_SERVICE_ACCOUNT_KEY_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY_PATH }} \
+                $env_var \
                 $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
-          EOF
+            EOF
           done
 
   build-and-deploy-frontend:

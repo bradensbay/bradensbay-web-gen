@@ -6,7 +6,7 @@ const { initializeApp } = require('firebase/app');
 const { getDatabase, ref, get } = require('firebase/database');
 const firebaseConfig = require('./firebaseConfig');
 const config = require('./config'); // Import the centralized config
-
+//console.log(firebaseConfig);
 const PORT = config.ports.userService;
 
 const firebaseApp = initializeApp(firebaseConfig);
