@@ -4,7 +4,7 @@ const OpenAI = require('openai');
 const axios = require('axios'); // Use axios for HTTP requests
 const fs = require('fs');
 const path = require('path');
-const config = require('../config'); // Import the centralized config
+const config = require('./config'); // Import the centralized config
 
 const app = express();
 const PORT = config.ports.promptService;
