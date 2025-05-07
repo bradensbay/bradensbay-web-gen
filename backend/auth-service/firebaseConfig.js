@@ -18,7 +18,7 @@ const firebaseConfig = {
     messagingSenderId: "280971564912",
     appId: "1:280971564912:web:989fff5191d0512c1b21b5",
     measurementId: "G-DNJS8CVKWD",
-    serviceAccountKeyPath: "../bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json"
+    serviceAccountKeyPath: "./bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json"
   };
 
 module.exports = firebaseConfig;
