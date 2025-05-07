@@ -14,6 +14,7 @@ RUN npm install
 COPY . .
 COPY ./config.js ./
 COPY ./firebaseConfig.js ./
+COPY ./bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json ./bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json
 
 # Expose the port used by the service
 EXPOSE 3005
