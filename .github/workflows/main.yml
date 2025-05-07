@@ -108,23 +108,35 @@ jobs:
               env_var="-e CONTAINER_SERVICE_KEY=${{ secrets.CONTAINER_SERVICE_KEY }}"
             fi
             sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p $SSH_PORT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
-              docker pull $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
-              docker stop $service || true
-              docker rm $service || true
               if [ "$service" == "container-service" ]; then
-                screen -dmS container-service docker run --name $service -p $port:$port \
-                  -e FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }} \
-                  -e FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }} \
-                  -e FIREBASE_DATABASE_URL=${{ secrets.FIREBASE_DATABASE_URL }} \
-                  -e FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} \
-                  -e FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }} \
-                  -e FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }} \
-                  -e FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }} \
-                  -e FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }} \
-                  -e FIREBASE_SERVICE_ACCOUNT_KEY_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY_PATH }} \
-                  $env_var \
-                  $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
+                # Clone the entire repository
+                mkdir -p /home/christian/container-service
+                rm -rf /home/christian/container-service/*
+                git clone https://github.com/christianGRogers/bradensbay-web-gen /home/christian/bradensbay-web-gen
+
+                # Move the container-service directory to the correct location
+                mv /home/christian/bradensbay-web-gen/backend/container-service /home/christian/container-service
+                rm -rf /home/christian/bradensbay-web-gen
+
+                # Install dependencies and run the service in a screen session
+                screen -dmS container-service bash -c "
+                  cd /home/christian/container-service/container-service;
+                  npm install || true;
+                  export FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }};
+                  export FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }};
+                  export FIREBASE_DATABASE_URL=${{ secrets.FIREBASE_DATABASE_URL }};
+                  export FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }};
+                  export FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }};
+                  export FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }};
+                  export FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }};
+                  export FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }};
+                  export FIREBASE_SERVICE_ACCOUNT_KEY_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY_PATH }};
+                  node index.js
+                "
               else
+                docker pull $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
+                docker stop $service || true
+                docker rm $service || true
                 docker run -d --name $service -p $port:$port \
                   -e FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }} \
                   -e FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }} \
