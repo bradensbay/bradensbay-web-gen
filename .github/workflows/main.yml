@@ -98,6 +98,7 @@ jobs:
             ["start-vm-service"]=3001
             ["update-key-service"]=3002
             ["user-service"]=3004
+            ["container-service"]=3007
           )
           for service in "${!service_ports[@]}"; do
             port=${service_ports[$service]}
@@ -110,18 +111,33 @@ jobs:
               docker pull $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
               docker stop $service || true
               docker rm $service || true
-              docker run -d --name $service -p $port:$port \
-                -e FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }} \
-                -e FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }} \
-                -e FIREBASE_DATABASE_URL=${{ secrets.FIREBASE_DATABASE_URL }} \
-                -e FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} \
-                -e FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }} \
-                -e FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }} \
-                -e FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }} \
-                -e FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }} \
-                -e FIREBASE_SERVICE_ACCOUNT_KEY_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY_PATH }} \
-                $env_var \
-                $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
+              if [ "$service" == "container-service" ]; then
+                screen -dmS container-service docker run --name $service -p $port:$port \
+                  -e FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }} \
+                  -e FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }} \
+                  -e FIREBASE_DATABASE_URL=${{ secrets.FIREBASE_DATABASE_URL }} \
+                  -e FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} \
+                  -e FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }} \
+                  -e FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }} \
+                  -e FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }} \
+                  -e FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }} \
+                  -e FIREBASE_SERVICE_ACCOUNT_KEY_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY_PATH }} \
+                  $env_var \
+                  $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
+              else
+                docker run -d --name $service -p $port:$port \
+                  -e FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }} \
+                  -e FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }} \
+                  -e FIREBASE_DATABASE_URL=${{ secrets.FIREBASE_DATABASE_URL }} \
+                  -e FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }} \
+                  -e FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }} \
+                  -e FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }} \
+                  -e FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }} \
+                  -e FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }} \
+                  -e FIREBASE_SERVICE_ACCOUNT_KEY_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY_PATH }} \
+                  $env_var \
+                  $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
+              fi
           EOF
           done
 
