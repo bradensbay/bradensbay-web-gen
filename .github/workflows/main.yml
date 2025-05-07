@@ -131,7 +131,7 @@ jobs:
                   export FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }};
                   export FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }};
                   export FIREBASE_SERVICE_ACCOUNT_KEY_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY_PATH }};
-                  node index.js
+                  npm start
                 "
               else
                 docker pull $DOCKER_REGISTRY/${{ secrets.DOCKER_USERNAME }}/$service:latest
