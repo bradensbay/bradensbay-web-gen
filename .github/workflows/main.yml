@@ -66,9 +66,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Decode Firebase Service Account Key
+      - name: Decode Firebase Service Account Key for All Backend Services
         run: |
-          echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }} | base64 -d > ./backend/bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json
+          for service in ./backend/*; do
+            if [ -d "$service" ]; then
+              echo ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }} | base64 -d > "$service/bradensbay-1720893101514-firebase-adminsdk-5czfh-d4f37a1986.json"
+            fi
+          done
 
       - name: Build and Push Backend Services
         run: |
