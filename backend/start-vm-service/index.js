@@ -17,6 +17,8 @@ admin.initializeApp({
     databaseURL: firebaseConfig.databaseURL,
 });
 
+console.log('Container key:', process.env.CONTAINER_SERVICE_KEY);
+
 async function isEmailVerified(uid) {
     try {
         const userRecord = await admin.auth().getUser(uid);
