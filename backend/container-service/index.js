@@ -5,6 +5,7 @@ const config = require('./config'); // Import the centralized config
 
 const PORT = config.ports.containerService;
 const AUTH_KEY = process.env.CONTAINER_SERVICE_KEY; // RSA-style key from environment variable
+const SSH_PASSWORD = process.env.SSH_PASSWORD; // SSH password from environment variable
 console.log('Container key:', AUTH_KEY);
 const app = express();
 
@@ -14,6 +15,12 @@ app.use(express.json());
 
 function executeCommand(command) {
     return new Promise((resolve, reject) => {
+        // Check if the command includes 'sudo'
+        if (command.includes('sudo')) {
+            // Remove the first occurrence of 'sudo' and prepend the password
+            command = `echo ${SSH_PASSWORD} | sudo -S ${command.replace('sudo', '').trim()}`;
+        }
+
         exec(command, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error executing command: ${error.message}`);
