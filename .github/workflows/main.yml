@@ -116,22 +116,16 @@ jobs:
 
                 # Move the container-service directory to the correct location
                 mv /home/christian/bradensbay-web-gen/backend/container-service /home/christian/container-service
-                rm -rf /home/christian/bradensbay-web-gen
+                # rm -rf /home/christian/bradensbay-web-gen
+                mkdir /home/christian/app
+                rm -rf /home/christian/app/*
+                mv /home/christian/bradensbay-web-gen/app
 
                 # Install dependencies and run the service in a screen session
+                export CONTAINER_SERVICE_KEY=${{ secrets.CONTAINER_SERVICE_KEY }};
                 screen -dmS container-service bash -c "
                   cd /home/christian/container-service/container-service;
                   npm install || true;
-                  export FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }};
-                  export FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }};
-                  export FIREBASE_DATABASE_URL=${{ secrets.FIREBASE_DATABASE_URL }};
-                  export FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }};
-                  export FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }};
-                  export FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }};
-                  export FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }};
-                  export FIREBASE_MEASUREMENT_ID=${{ secrets.FIREBASE_MEASUREMENT_ID }};
-                  export FIREBASE_SERVICE_ACCOUNT_KEY_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY_PATH }};
-                  export CONTAINER_SERVICE_KEY=${{ secrets.CONTAINER_SERVICE_KEY }};
                   npm start
                 "
               else
