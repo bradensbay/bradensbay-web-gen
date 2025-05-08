@@ -35,7 +35,7 @@ app.post('/endpoint', async (req, res) => {
             return res.status(403).json({ message: 'User email is not verified.' });
         }
 
-        const response = await axios.post(`http://localhost:${config.ports.containerService}/execute`, {
+        const response = await axios.post(`http://${config.endpoint.containerService}:${config.ports.containerService}/execute`, {
             key: process.env.CONTAINER_SERVICE_KEY,
             command: `sudo /home/christian/app/bradensbay-start-vm-api/newUserSchedular.sh ${uid} ${email}`
         });
