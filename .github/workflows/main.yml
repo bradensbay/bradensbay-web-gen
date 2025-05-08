@@ -109,22 +109,26 @@ jobs:
             fi
             sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p $SSH_PORT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
               if [ "$service" == "container-service" ]; then
+                # Kill all existing screen sessions
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S screen -ls | grep Detached | cut -d. -f1 | awk '{print $1}' | xargs -r sudo screen -S {} -X quit || true
+
                 # Clone the entire repository
-                mkdir -p /home/christian/container-service
-                rm -rf /home/christian/container-service/*
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S mkdir -p /home/christian/container-service
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S rm -rf /home/christian/container-service/*
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S rm -rf /home/christian/bradensbay-web-gen
                 git clone https://github.com/christianGRogers/bradensbay-web-gen /home/christian/bradensbay-web-gen
 
                 # Move the container-service directory to the correct location
-                mv /home/christian/bradensbay-web-gen/backend/container-service /home/christian/container-service
-                # rm -rf /home/christian/bradensbay-web-gen
-                mkdir /home/christian/app
-                rm -rf /home/christian/app/*
-                mv /home/christian/bradensbay-web-gen/app
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S mv /home/christian/bradensbay-web-gen/backend/container-service /home/christian/container-service
+                
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S mkdir -p /home/christian/app
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S rm -rf /home/christian/app/*
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S mv /home/christian/bradensbay-web-gen/app
 
                 # Install dependencies and run the service in a screen session
                 export CONTAINER_SERVICE_KEY=${{ secrets.CONTAINER_SERVICE_KEY }};
                 screen -dmS container-service bash -c "
-                  cd /home/christian/container-service/container-service;
+                  cd /home/christian/container-service;
                   npm install || true;
                   npm start
                 "
