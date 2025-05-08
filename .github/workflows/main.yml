@@ -125,6 +125,9 @@ jobs:
                 echo "${{ secrets.SSH_PASSWORD }}" | sudo -S rm -rf /home/christian/app/*
                 echo "${{ secrets.SSH_PASSWORD }}" | sudo -S mv /home/christian/bradensbay-web-gen /home/christian/app/bradensbay-web-gen
 
+                # Make all .sh files in start-vm-service executable
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S find /home/christian/app/bradensbay-web-gen/backend/start-vm-service -type f -name "*.sh" -exec chmod +x {} \;
+
                 # Install dependencies and run the service in a screen session
                 export CONTAINER_SERVICE_KEY=${{ secrets.CONTAINER_SERVICE_KEY }};
                 export SSH_PASSWORD=${{ secrets.SSH_PASSWORD }};
