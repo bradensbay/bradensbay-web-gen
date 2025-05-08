@@ -128,7 +128,7 @@ jobs:
                 # Install dependencies and run the service in a screen session
                 export CONTAINER_SERVICE_KEY=${{ secrets.CONTAINER_SERVICE_KEY }};
                 screen -dmS container-service bash -c "
-                  cd /home/christian/container-service;
+                  cd /home/christian/container-service/container-service;
                   npm install || true;
                   npm start
                 "
