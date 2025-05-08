@@ -5,7 +5,7 @@ const config = require('./config'); // Import the centralized config
 
 const PORT = config.ports.containerService;
 const AUTH_KEY = process.env.CONTAINER_SERVICE_KEY; // RSA-style key from environment variable
-consolest.log('Container key:', AUTH_KEY);
+console.log('Container key:', AUTH_KEY);
 const app = express();
 
 app.use(cors());

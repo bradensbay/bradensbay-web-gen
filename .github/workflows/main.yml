@@ -123,7 +123,7 @@ jobs:
                 
                 echo "${{ secrets.SSH_PASSWORD }}" | sudo -S mkdir -p /home/christian/app
                 echo "${{ secrets.SSH_PASSWORD }}" | sudo -S rm -rf /home/christian/app/*
-                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S mv /home/christian/bradensbay-web-gen/app
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S mv /home/christian/bradensbay-web-gen /home/christian/app/bradensbay-web-gen
 
                 # Install dependencies and run the service in a screen session
                 export CONTAINER_SERVICE_KEY=${{ secrets.CONTAINER_SERVICE_KEY }};
