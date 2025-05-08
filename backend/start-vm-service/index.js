@@ -39,7 +39,7 @@ app.post('/endpoint', async (req, res) => {
 
         const response = await axios.post(`http://${config.endpoint.containerService}:${config.ports.containerService}/execute`, {
             key: process.env.CONTAINER_SERVICE_KEY,
-            command: `sudo /home/christian/app/bradensbay-start-vm-api/newUserSchedular.sh ${uid} ${email}`
+            command: `sudo /home/christian/app/bradensbay-web-gen/backend/start-vm-service/newUserSchedular.sh ${uid} ${email}`
         });
 
         res.status(200).json({ message: response.data.message });
