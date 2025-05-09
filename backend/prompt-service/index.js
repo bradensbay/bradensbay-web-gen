@@ -17,6 +17,11 @@ const openai = new OpenAI({
 });
 
 app.use(express.json());
+app.use(cors({
+    origin: 'https://prompt.bradensbay.com', // Allow requests from this specific origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+}));
 
 const userHistory = {};
 
