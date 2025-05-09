@@ -1,7 +1,8 @@
 const { initializeApp } = require('firebase/app');
 const { getDatabase, ref, update } = require('firebase/database');
-const firebaseConfig = require('../firebaseConfig'); // Import the config
+const firebaseConfig = require('./firebaseConfig'); // Import the config
 
+firebaseConfig.serviceAccountKeyPath = "/home/christian/bradensbay-1720893101514-firebase-adminsdk-5czfh-6849539d64.json";
 const firebaseApp = initializeApp(firebaseConfig);
 const database = getDatabase(firebaseApp);
 
