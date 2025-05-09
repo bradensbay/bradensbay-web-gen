@@ -8,6 +8,9 @@ const config = {
         promptService: 3003,
         containerService: 3007,
     },
+    endpoint: {
+        containerService: '10.0.0.150'
+    }
 };
 
 module.exports = config;
