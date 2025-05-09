@@ -68,7 +68,7 @@ app.post('/execute', async (req, res) => {
 
         addUserHistory(username, prompt);
 
-        const response = await axios.post(`http://localhost:${config.ports.containerService}/execute`, {
+        const response = await axios.post(`http://${config.endpoint.containerService}:${config.ports.containerService}/execute`, {
             key: process.env.CONTAINER_SERVICE_KEY,
             command: commands
         });
