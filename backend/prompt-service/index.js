@@ -62,7 +62,16 @@ app.post('/execute', async (req, res) => {
             max_completion_tokens: 16383,
         });
 
-        let commands = completion.choices[0].message.content
+        let completionContent = completion.choices[0].message.content;
+
+        // Split the content into commands and explanation
+        const [commandsPart, explanationPart] = completionContent.split("Explanation:");
+
+        if (!commandsPart || !explanationPart) {
+            throw new Error("Invalid response format from OpenAI API. Missing 'Explanation:' delimiter.");
+        }
+
+        let commands = commandsPart
             .replace(/someusername/g, username)
             .replace(/userpassword/g, contPwd);
 
@@ -76,7 +85,7 @@ app.post('/execute', async (req, res) => {
             command: commands
         });
 
-        res.status(200).json({ message: response.data.message });
+        res.status(200).json({ message: explanationPart.trim() });
     } catch (error) {
         console.error(`Error: ${error.message}`);
         res.status(500).json({ error: 'An error occurred while processing your request.' });
