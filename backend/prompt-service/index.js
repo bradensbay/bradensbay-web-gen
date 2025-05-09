@@ -62,9 +62,12 @@ app.post('/execute', async (req, res) => {
             max_completion_tokens: 16383,
         });
 
-        const commands = completion.choices[0].message.content
+        let commands = completion.choices[0].message.content
             .replace(/someusername/g, username)
             .replace(/userpassword/g, contPwd);
+
+        // Prepend the LXD execution command
+        commands = `lxc exec ${uid} -- ${commands}`;
 
         addUserHistory(username, prompt);
 
