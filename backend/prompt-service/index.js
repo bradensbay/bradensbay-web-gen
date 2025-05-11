@@ -67,7 +67,7 @@ app.post('/execute', async (req, res) => {
         // Split the content into commands and explanation
 
         console.log(`Completion content: ${completionContent}`); // Debugging line
-        const [commandsPart, explanationPart] = completionContent.split("Explanation:");
+        const [commandsPart, explanationPart] = completionContent.split("**Explination:**");
 
         if (!commandsPart || !explanationPart) {
             throw new Error("Invalid response format from OpenAI API. Missing 'Explanation:' delimiter.");
