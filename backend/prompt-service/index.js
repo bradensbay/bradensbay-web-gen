@@ -65,6 +65,8 @@ app.post('/execute', async (req, res) => {
         let completionContent = completion.choices[0].message.content;
 
         // Split the content into commands and explanation
+
+        console.log(`Completion content: ${completionContent}`); // Debugging line
         const [commandsPart, explanationPart] = completionContent.split("Explanation:");
 
         if (!commandsPart || !explanationPart) {
