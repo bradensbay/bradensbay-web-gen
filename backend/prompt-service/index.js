@@ -78,9 +78,12 @@ app.post('/execute', async (req, res) => {
 
         const [commandsPart, explanationPart] = splitContent;
 
+        // Remove ```bash and ``` if present
         let commands = commandsPart
             .replace(/someusername/g, username)
-            .replace(/userpassword/g, contPwd);
+            .replace(/userpassword/g, contPwd)
+            .replace(/```bash\s*/gi, '') // Remove ```bash (case-insensitive, with optional whitespace)
+            .replace(/```/g, '');        // Remove closing ```
 
         // Prepend the LXD execution command
         const safeCommands = commands.replace(/'/g, `'\\''`);
