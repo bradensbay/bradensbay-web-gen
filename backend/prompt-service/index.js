@@ -67,11 +67,16 @@ app.post('/execute', async (req, res) => {
         // Split the content into commands and explanation
 
         console.log(`Completion content: ${completionContent}`); // Debugging line
-        const [commandsPart, explanationPart] = completionContent.split("**Explanation:**");
+        // More robust delimiter check: accept common misspellings using regex
+        // Matches "**Explanation:**" or "**Explination:**" (case-insensitive)
+        const delimiterRegex = /\*\*Expl[ai]nation:\*\*/i;
+        const splitContent = completionContent.split(delimiterRegex);
 
-        if (!commandsPart || !explanationPart) {
-            throw new Error("Invalid response format from OpenAI API. Missing '**Explanation:**' delimiter.");
+        if (splitContent.length < 2) {
+            throw new Error("Invalid response format from OpenAI API. Missing '**Explanation:**' delimiter (or common variants).");
         }
+
+        const [commandsPart, explanationPart] = splitContent;
 
         let commands = commandsPart
             .replace(/someusername/g, username)
