@@ -25,13 +25,13 @@ app.use(cors({
 
 const userHistory = {};
 
-function addUserHistory(username, command) {
-    if (!userHistory[username]) {
-        userHistory[username] = [];
+function addUserHistory(uid, command) {
+    if (!userHistory[uid]) {
+        userHistory[uid] = [];
     }
-    userHistory[username].push(command);
-    if (userHistory[username].length > 15) {
-        userHistory[username].shift();
+    userHistory[uid].push(command);
+    if (userHistory[uid].length > 15) {
+        userHistory[uid].shift();
     }
 }
 
@@ -43,12 +43,12 @@ app.post('/execute', async (req, res) => {
     }
 
     if (prompt === 'clear') {
-        userHistory[username] = [];
+        userHistory[uid] = [];
         return res.status(200).json({ message: `Input history cleared for ${username}.` });
     }
 
     try {
-        const history = userHistory[username] || [];
+        const history = userHistory[uid] || [];
         const messages = [
             { role: "system", content: systemMessage },
             ...history.map(command => ({ role: "user", content: command })),
@@ -80,12 +80,18 @@ app.post('/execute', async (req, res) => {
         // Prepend the LXD execution command
         commands = `lxc exec ${uid} -- ${commands}`;
 
-        addUserHistory(username, prompt);
+        // Debug: Print the commands being sent to the container service
+        console.log(`Sending commands to container service: ${commands}`);
+
+        addUserHistory(uid, prompt);
 
         const response = await axios.post(`http://${config.endpoint.containerService}:${config.ports.containerService}/execute`, {
             key: process.env.CONTAINER_SERVICE_KEY,
             command: commands
         });
+
+        // Debug: Print the response from the container service
+        console.log('Container service response:', response.data);
 
         res.status(200).json({ message: explanationPart.trim() });
     } catch (error) {
