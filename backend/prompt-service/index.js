@@ -83,7 +83,8 @@ app.post('/execute', async (req, res) => {
             .replace(/userpassword/g, contPwd);
 
         // Prepend the LXD execution command
-        commands = `lxc exec ${uid} -- ${commands}`;
+        const safeCommands = commands.replace(/'/g, `'\\''`);
+        commands = `lxc exec ${uid} -- bash -c '${safeCommands}'`;
 
         // Debug: Print the commands being sent to the container service
         console.log(`Sending commands to container service: ${commands}`);
