@@ -65,13 +65,14 @@ app.post('/execute', async (req, res) => {
         let completionContent = completion.choices[0].message.content;
 
 
-        console.log(`Completion content: ${completionContent}`);
+
+        console.log(`Completion content: ${completionContent}`); // Debugging line
 
         const delimiterRegex = /\*\*Expl[ai]nation:\*\*/i;
         const splitContent = completionContent.split(delimiterRegex);
 
-        if (!commandsPart || !explanationPart) {
-            throw new Error("Invalid response format from OpenAI API. Missing 'Explanation:' delimiter.");
+        if (splitContent.length < 2) {
+            throw new Error("Invalid response format from OpenAI API. Missing '**Explanation:**' delimiter (or common variants).");
         }
 
         const [commandsPart, explanationPart] = splitContent;
@@ -82,6 +83,7 @@ app.post('/execute', async (req, res) => {
             .replace(/userpassword/g, contPwd)
             .replace(/```bash\s*/gi, '')
             .replace(/```/g, '');       
+
 
         const safeCommands = commands.replace(/'/g, `'\\''`);
         commands = `lxc exec ${uid} -- bash -c '${safeCommands}'`;
