@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const axios = require('axios'); // Use axios for HTTP requests
-const config = require('./config'); // Import the centralized config
+const axios = require('axios'); 
+const config = require('./config');
 
 const app = express();
 const PORT = config.ports.updateKeyService;

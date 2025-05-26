@@ -5,8 +5,8 @@ const cors = require('cors');
 const { initializeApp } = require('firebase/app');
 const { getDatabase, ref, get } = require('firebase/database');
 const firebaseConfig = require('./firebaseConfig');
-const config = require('./config'); // Import the centralized config
-//console.log(firebaseConfig);
+const config = require('./config'); 
+
 const PORT = config.ports.userService;
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -42,7 +42,6 @@ const getPortPwd = async (uid) => {
 app.post('/execute', async (req, res) => {
     const { uid } = req.body;
 
-    // Validate request body
     if (!uid) {
         return res.status(400).json({ error: 'UID is required.' });
     }

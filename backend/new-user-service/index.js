@@ -17,22 +17,19 @@ admin.initializeApp({
     databaseURL: firebaseConfig.databaseURL,
 });
 
-// Initialize Firebase Client SDK
+
 const firebaseApp = initializeClientApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 
-// Initialize Express
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Helper Function for Authentication using Client SDK
 async function signup(email, password) {
     try {
-        // Create user with email and password
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-        // Send verification email
         await sendEmailVerification(userCredential.user);
 
         return { message: "all good" };
@@ -42,7 +39,7 @@ async function signup(email, password) {
     }
 }
 
-// Endpoint to Sign Up (using Client SDK)
+
 app.post('/signup', async (req, res) => {
     const { email, password } = req.body;
 
@@ -58,7 +55,7 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-// Start the Server
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
