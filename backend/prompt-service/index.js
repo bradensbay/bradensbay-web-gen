@@ -1,10 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const OpenAI = require('openai');
-const axios = require('axios'); // Use axios for HTTP requests
+const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-const config = require('./config'); // Import the centralized config
+const config = require('./config');
 
 const app = express();
 const PORT = config.ports.promptService;
@@ -18,9 +18,9 @@ const openai = new OpenAI({
 
 app.use(express.json());
 app.use(cors({
-    origin: 'https://prompt.bradensbay.com', // Allow requests from this specific origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+    origin: 'https://prompt.bradensbay.com', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
 }));
 
 const userHistory = {};
@@ -64,11 +64,10 @@ app.post('/execute', async (req, res) => {
 
         let completionContent = completion.choices[0].message.content;
 
-        // Split the content into commands and explanation
+
 
         console.log(`Completion content: ${completionContent}`); // Debugging line
-        // More robust delimiter check: accept common misspellings using regex
-        // Matches "**Explanation:**" or "**Explination:**" (case-insensitive)
+
         const delimiterRegex = /\*\*Expl[ai]nation:\*\*/i;
         const splitContent = completionContent.split(delimiterRegex);
 
@@ -78,18 +77,18 @@ app.post('/execute', async (req, res) => {
 
         const [commandsPart, explanationPart] = splitContent;
 
-        // Remove ```bash and ``` if present
+        
         let commands = commandsPart
             .replace(/someusername/g, username)
             .replace(/userpassword/g, contPwd)
-            .replace(/```bash\s*/gi, '') // Remove ```bash (case-insensitive, with optional whitespace)
-            .replace(/```/g, '');        // Remove closing ```
+            .replace(/```bash\s*/gi, '')
+            .replace(/```/g, '');       
 
-        // Prepend the LXD execution command
+
         const safeCommands = commands.replace(/'/g, `'\\''`);
         commands = `lxc exec ${uid} -- bash -c '${safeCommands}'`;
 
-        // Debug: Print the commands being sent to the container service
+        
         console.log(`Sending commands to container service: ${commands}`);
 
         addUserHistory(uid, prompt);
@@ -99,7 +98,7 @@ app.post('/execute', async (req, res) => {
             command: commands
         });
 
-        // Debug: Print the response from the container service
+        
         console.log('Container service response:', response.data);
 
         res.status(200).json({ message: explanationPart.trim() });

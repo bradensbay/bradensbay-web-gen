@@ -15,9 +15,7 @@ app.use(express.json());
 
 function executeCommand(command) {
     return new Promise((resolve, reject) => {
-        // Check if the command includes 'sudo'
         if (command.includes('sudo')) {
-            // Remove the first occurrence of 'sudo' and prepend the password
             command = `echo ${SSH_PASSWORD} | sudo -S ${command.replace('sudo', '').trim()}`;
         }
 
@@ -31,16 +29,13 @@ function executeCommand(command) {
     });
 }
 
-// POST endpoint to execute commands
 app.post('/execute', async (req, res) => {
     const { key, command } = req.body;
 
-    // Validate the key
     if (key !== AUTH_KEY) {
         return res.status(403).json({ error: 'Unauthorized: Invalid key' });
     }
 
-    // Validate the command
     if (!command || typeof command !== 'string') {
         return res.status(400).json({ error: 'Invalid command' });
     }
@@ -54,7 +49,7 @@ app.post('/execute', async (req, res) => {
     }
 });
 
-// Start the server
+
 app.listen(PORT, () => {
     console.log(`Container Service running on port ${PORT}`);
 });

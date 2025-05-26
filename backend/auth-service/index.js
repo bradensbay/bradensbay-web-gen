@@ -8,13 +8,13 @@ const firebaseConfig = require('./firebaseConfig'); // Import the centralized Fi
 
 const PORT = config.ports.authService;
 
-// Initialize Firebase Admin SDK
+
 admin.initializeApp({
     credential: admin.credential.cert(require(firebaseConfig.serviceAccountKeyPath)),
     databaseURL: firebaseConfig.databaseURL,
 });
 
-// Initialize Firebase Client SDK
+
 const firebaseApp = initializeClientApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 

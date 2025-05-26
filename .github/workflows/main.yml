@@ -109,8 +109,8 @@ jobs:
             fi
             sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p $SSH_PORT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
               if [ "$service" == "container-service" ]; then
-                # Kill all existing screen sessions
-                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S screen -ls | grep Detached | cut -d. -f1 | awk '{print $1}' | xargs -r sudo screen -S {} -X quit || true
+                # Kill all existing screen sessions named container-service
+                echo "${{ secrets.SSH_PASSWORD }}" | sudo -S screen -S container-service -X quit || true
 
                 # Clone the entire repository
                 echo "${{ secrets.SSH_PASSWORD }}" | sudo -S mkdir -p /home/christian/container-service
