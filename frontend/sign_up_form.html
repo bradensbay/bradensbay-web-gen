@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Sign-up</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/ios-filled/50/b.png">
+    <link rel="stylesheet" href="https://prompt.bradensbay.com/style.css">
+</head>
+<body>
+    <!-- Mobile Notification -->
+    <div id="mobile-notification">
+        <p>
+            Hello, you are using a mobile device. This is still a beta app and will perform better in a desktop environment.
+        </p>
+        <button id="dismiss-button">Okay</button>
+    </div>
+
+    <!-- Terminal UI -->
+    <div id="terminal">
+        <div id="terminal__bar">
+            <p id="bar__user">user@bradensbay.com ~</p>
+            <div class="link-group">
+                <a href="https://prompt.bradensbay.com" style="color: #7eda28;"> Back </a>
+                <a href="https://prompt.bradensbay.com/readme.html" target="_blank" style="color: #7eda28; margin-left: 16px;"> Help </a>
+              </div>
+        </div>
+
+        <div id="terminal__body">
+            <div id="logosignup" >
+                <img src="https://prompt.bradensbay.com/logo.png" alt="logo" class="terminal-logo" style="width:200px; height:200px;">
+            </div>
+            
+            <div id="terminal__prompt">
+                <span id="terminal__prompt--user">new-email:</span>
+                <span id="terminal__prompt--location">~</span>
+                <span id="terminal__prompt--bling">$</span>
+                <input type="text" id="terminal__input" autofocus>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+
+
+
+
+
+        let userState = {
+            email: "",
+            uid: "",
+            state: "awaitingEmail",
+            contPwd: "",
+            action: "signup", // Default action is signup; toggle to 'login' if needed.
+        };
+
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const terminalInput = document.getElementById("terminal__input");
+
+        terminalInput.addEventListener("keydown", async (event) => {
+            if (event.key === "Enter") {
+                const command = terminalInput.value.trim();
+                terminalInput.value = "";
+                await handleCommand(command);
+            }
+        });
+
+        setupMobileNotification();
+    });
+
+    function setupMobileNotification() {
+        const notification = document.getElementById("mobile-notification");
+        const dismissButton = document.getElementById("dismiss-button");
+
+        if (/iPhone|iPad|iPod|Android|BlackBerry|Windows Phone/i.test(navigator.userAgent)) {
+            notification.style.display = "block";
+            dismissButton.addEventListener("click", () => {
+                notification.style.display = "none";
+            });
+        }
+    }
+
+    async function handleCommand(command) {
+        if (userState.state === "awaitingEmail") {
+            userState.email = command;
+            userState.state = "awaitingPassword";
+            updatePrompt("password:", true);
+        } else if (userState.state === "awaitingPassword") {
+            await signupUser(userState.email, command);
+        }
+    }
+    async function signupUser(email, password) {
+        try {
+            // Call the endpoint with email and password
+            const response = await fetch("https://new-user.bradensbay.com/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.message == "all good") {
+                userState.state = "emailVerificationSent";
+
+                displayOutput("Signup successful! A verification email has been sent. Please check your email to verify your account.");
+                updatePrompt("wait...");
+
+                // Countdown for redirection
+                let countdown = 15;
+
+                // Create the countdown message element and append it to the terminal body
+                const countdownMessage = document.createElement("div");
+                countdownMessage.className = "terminal__output";
+                countdownMessage.innerHTML = `Login successful! Redirecting in ${countdown} seconds...`;
+                const terminalBody = document.getElementById("terminal__body");
+                terminalBody.insertBefore(countdownMessage, document.getElementById("terminal__prompt"));
+
+                const interval = setInterval(() => {
+                    countdown--;
+                    if (countdown >= 0) {
+                        countdownMessage.innerHTML = `Login successful! Redirecting in ${countdown} seconds...`;
+                    }
+
+                    if (countdown === 0) {
+                        clearInterval(interval);
+                        window.location.href = "https://prompt.bradensbay.com";
+                    }
+                }, 1000);
+            } else {
+                throw new Error(data.message || "Signup failed.");
+            }
+        } catch (error) {
+            displayOutput(`Signup failed: ${error.message}`);
+            resetPrompt();
+        }
+    }
+
+
+
+
+
+
+    function redirectToPrompt() {
+        setTimeout(() => {
+            window.location.href = "https://prompt.bradensbay.com";
+        }, 1500); // Wait for 1.5 seconds before redirection
+    }
+
+    function updatePrompt(text, hideInput = false) {
+        const promptUser = document.getElementById("terminal__prompt--user");
+        const terminalInput = document.getElementById("terminal__input");
+
+        promptUser.innerText = text;
+        terminalInput.type = hideInput ? "password" : "text";
+    }
+
+    function resetPrompt() {
+        userState.state = "awaitingEmail";
+        updatePrompt("new-email:");
+    }
+
+    function displayOutput(message) {
+        const terminalBody = document.getElementById("terminal__body");
+        const outputDiv = document.createElement("div");
+
+        outputDiv.className = "terminal__output";
+        outputDiv.innerHTML = `<span>${message}</span>`;
+        terminalBody.insertBefore(outputDiv, document.getElementById("terminal__prompt"));
+    }
+</script>
+</body>
+</html>
