@@ -19,7 +19,10 @@ const firebaseApp = initializeClientApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'https://prompt.bradensbay.com',
+    credentials: true
+}));
 app.use(express.json());
 
 async function loginUser(email, password) {
