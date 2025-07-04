@@ -1,3 +1,3 @@
 # bradensbay-web-gen
-bradensbay mono repository for the the frontend and backend of the web gen project, (previously segregated repositories for each service). 
+bradensbay mono repository for the the frontend and backend of the web gen project, (previously segregated repositories for each service). This is used as an example project in bradensbay.com also the apis are used for simplifing the project.
 ![logo](https://github.com/user-attachments/assets/f61080be-f79d-4637-8802-f9a988425b11)
