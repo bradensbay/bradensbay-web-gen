@@ -20,7 +20,7 @@ const auth = getAuth(firebaseApp);
 
 const app = express();
 app.use(cors({
-    origin: 'https://prompt.bradensbay.com',
+    origin: ['https://prompt.bradensbay.com', 'http://localhost:5173'], //revert for secerity
     credentials: true
 }));
 app.use(express.json());
